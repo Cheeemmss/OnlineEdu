@@ -20,15 +20,15 @@ public class Result {
 
 
     public static Result success(String msg){
-        return new Result("200",msg,null);
+        return new Result(SystemCode.CODE_SUCCESS,msg,null);
     }
 
     public static Result success(String msg,Object data){
-        return new Result("200",msg,data);
+        return new Result(SystemCode.CODE_SUCCESS,msg,data);
     }
 
     public static Result success(Object data){
-        return new Result("200",null,data);
+        return new Result(SystemCode.CODE_SUCCESS,null,data);
     }
 
     public static Result fail(String Code,String msg){

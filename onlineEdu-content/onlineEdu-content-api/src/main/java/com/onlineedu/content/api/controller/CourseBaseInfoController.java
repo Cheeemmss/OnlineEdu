@@ -8,9 +8,7 @@ import com.onlineedu.content.model.entities.CourseBase;
 import com.onlineedu.content.service.CourseBaseService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -20,7 +18,8 @@ import javax.annotation.Resource;
  */
 
 @Api(tags = "内容管理")
-@RestController("/course")
+@RestController
+@RequestMapping("/course")
 public class CourseBaseInfoController {
 
     @Resource
