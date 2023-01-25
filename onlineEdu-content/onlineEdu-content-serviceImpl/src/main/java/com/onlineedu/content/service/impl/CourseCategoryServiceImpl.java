@@ -25,11 +25,14 @@ public class CourseCategoryServiceImpl extends ServiceImpl<CourseCategoryMapper,
     @Resource
     private CourseCategoryMapper courseCategoryMapper;
 
+    //课程分类根节点
+    private static final String ROOT_NODE_ID = "1";
+
     @Override
     public Result getTreeNodes() {
         List<CourseCategoryTreeDto> allCategory = courseCategoryMapper.selectAllTreeNodes();
         List<CourseCategoryTreeDto> TreeNodes = allCategory.stream()
-                .filter(item -> "1".equals(item.getParentid()))
+                .filter(item -> ROOT_NODE_ID.equals(item.getParentid()))
                 .map(item -> {
                     item.setChildren(getChildNodes(item, allCategory));
                     return item;
