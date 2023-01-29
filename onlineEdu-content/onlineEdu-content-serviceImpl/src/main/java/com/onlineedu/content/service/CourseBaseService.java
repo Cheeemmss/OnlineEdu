@@ -5,6 +5,7 @@ import com.onlineedu.base.exception.BusinessException;
 import com.onlineedu.base.model.PageParams;
 import com.onlineedu.base.model.Result;
 import com.onlineedu.content.model.dto.AddCourseDto;
+import com.onlineedu.content.model.dto.EditCourseDto;
 import com.onlineedu.content.model.dto.QueryCourseParamsDto;
 import com.onlineedu.content.model.entities.CourseBase;
 import org.apache.ibatis.annotations.Mapper;
@@ -20,4 +21,8 @@ public interface CourseBaseService extends IService<CourseBase> {
     Result pageList(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto);
 
     Result createCourseBase(Long companyId, AddCourseDto addCourseDto) throws  Exception;
+
+    Result getCourseBaseInfoById(Long courseId);
+
+    Result editCourseBase(Long companyId,EditCourseDto editCourseDto) throws Exception;
 }

@@ -1,8 +1,12 @@
 package com.onlineedu.content.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.onlineedu.content.model.dto.TeachplanDto;
 import com.onlineedu.content.model.entities.Teachplan;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author cheems
@@ -13,6 +17,7 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface TeachplanMapper extends BaseMapper<Teachplan> {
 
+    List<TeachplanDto> selectTeachPlanByCourseId(@Param("courseId") Long courseId);
 }
 
 

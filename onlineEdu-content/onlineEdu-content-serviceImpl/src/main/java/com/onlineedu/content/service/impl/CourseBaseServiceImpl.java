@@ -17,6 +17,7 @@ import com.onlineedu.content.mapper.CourseCategoryMapper;
 import com.onlineedu.content.mapper.CourseMarketMapper;
 import com.onlineedu.content.model.dto.AddCourseDto;
 import com.onlineedu.content.model.dto.CourseBaseInfoDto;
+import com.onlineedu.content.model.dto.EditCourseDto;
 import com.onlineedu.content.model.dto.QueryCourseParamsDto;
 import com.onlineedu.content.model.entities.CourseBase;
 import com.onlineedu.content.model.entities.CourseCategory;
@@ -120,6 +121,53 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
        return Result.success("保存课程基本信息成功",courseBaseInfoDto);
     }
 
+
+    @Override
+    public Result getCourseBaseInfoById(Long courseId) {
+        return Result.success(getCourseBaseInfo(courseId));
+    }
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result editCourseBase(Long companyId,EditCourseDto editCourseDto) throws Exception {
+
+        Long id = editCourseDto.getId();
+        CourseBase courseBase = courseBaseMapper.selectById(id);
+        if(courseBase == null){
+            throw new BusinessException(SystemCode.CODE_UNKOWN_ERROR,"课程信息不存在");
+        }
+        if(!companyId.equals(courseBase.getCompanyId())){
+            throw new BusinessException(SystemCode.CODE_UNKOWN_ERROR,"只允许创建课程的机构修改该课程");
+        }
+
+        //修改课程基本信息
+        CourseBase courseBaseNew = new CourseBase();
+        BeanUtil.copyProperties(editCourseDto,courseBaseNew);
+        courseBaseNew.setChangeDate(new Date());
+        int i = courseBaseMapper.updateById(courseBaseNew);
+        if(i <= 0){
+            throw new BusinessException(CommonError.UPDATE_EXCEPTION);
+        }
+
+        //修改课程营销信息
+        CourseMarket courseMarket = new CourseMarket();
+        BeanUtil.copyProperties(editCourseDto,courseMarket);
+        String charge = courseMarket.getCharge();
+        if(charge.equals(SystemStatus.CHARGE_STATUS_NOT_FREE)){
+            if(courseMarket.getPrice() == null || courseMarket.getPrice() <= 0){
+                throw new BusinessException(SystemCode.CODE_UNKOWN_ERROR,"课程价格不可以为空或0");
+            }
+        }
+
+        int k = courseMarketMapper.updateById(courseMarket);
+        if(k <= 0){
+            throw new BusinessException(CommonError.UPDATE_EXCEPTION);
+        }
+
+        return Result.success("修改课程信息成功",getCourseBaseInfo(id));
+    }
+
     /**
      * 拼装 CourseBaseInfoDto 获取课程基本信息和营销信息
      * @param courseId
@@ -141,6 +189,7 @@ public class CourseBaseServiceImpl extends ServiceImpl<CourseBaseMapper, CourseB
 
         return courseBaseInfoDto;
     }
+
 }
 
 
