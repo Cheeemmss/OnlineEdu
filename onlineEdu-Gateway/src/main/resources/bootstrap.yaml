@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      server-addr: 192.168.246.130:8848
+      discovery:
+        namespace: f2926904-cee3-40f1-9f87-359b91de1b55
+        group: online_edu
+      config:
+        namespace: f2926904-cee3-40f1-9f87-359b91de1b55
+        group: online_edu
+        file-extension: yaml
+        refresh-enabled: true
+
+  profiles:
+    active: dev

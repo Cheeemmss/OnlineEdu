@@ -6,13 +6,13 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * @Author cheems
- * @Date 2023/1/19 14:39
+ * @Date 2023/1/30 20:31
  */
 @EnableDiscoveryClient
 @SpringBootApplication
-public class ContentApplication {
+public class GatewayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(ContentApplication.class,args);
+        SpringApplication.run(GatewayApplication.class,args);
     }
 }

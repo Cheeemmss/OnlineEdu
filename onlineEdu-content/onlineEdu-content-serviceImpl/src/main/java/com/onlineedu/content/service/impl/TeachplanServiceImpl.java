@@ -58,7 +58,7 @@ public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan
     }
 
     /**
-     * 计算与当前课程计划的同级课程计划有几个
+     * 计算与当前课程计划的同级课程计划有几个 依次来确定新添加课程的order顺序
      * @param teachplan
      * @return 新添加的课程的order
      */

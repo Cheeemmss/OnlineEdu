@@ -71,7 +71,6 @@
 
 
     <select id="selectTeachPlanByCourseId" resultMap="teachPlanMap">
-
         SELECT
             one.id one_id,
             one.pname one_pname,

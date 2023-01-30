@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: content-service
+  cloud:
+    config:
+      override-none: true #配置本地优先
+    nacos:
+      server-addr: 192.168.246.130:8848
+      config:
+        namespace: f2926904-cee3-40f1-9f87-359b91de1b55
+        group: online_edu
+        file-extension: yaml
+        refresh-enabled: true
+
+  #profiles默认为dev
+  profiles:
+    active: dev
+
+
