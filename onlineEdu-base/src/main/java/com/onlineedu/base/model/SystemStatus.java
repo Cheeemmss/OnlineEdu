@@ -7,6 +7,22 @@ package com.onlineedu.base.model;
  */
 public abstract class SystemStatus {
 
+
+    /**
+     * 公共属性-使用态
+     */
+    public static final String PUBLIC_STATUS_USING = "1";
+
+    /**
+     * 公共属性-删除态
+     */
+    public static final String PUBLIC_STATUS_DELETE = "0";
+
+    /**
+     * 公共属性-暂时态
+     */
+    public static final String PUBLIC_STATUS_TEMP = "-1";
+
     /**
      * 课程收费规则-免费
      */
@@ -51,6 +67,21 @@ public abstract class SystemStatus {
      * 课程发布状态-下线
      */
     public static final String PUBLISH_STATUS_DOWN = "203003";
+
+    /**
+     * 文件类型-图片
+     */
+    public static final String FILE_TYPE_IMG = "001001";
+
+    /**
+     * 文件类型-视频
+     */
+    public static final String FILE_TYPE_VIDEO = "001002";
+
+    /**
+     * 文件类型-其他
+     */
+    public static final String FILE_TYPE_OTHER = "001003";
 
 
 

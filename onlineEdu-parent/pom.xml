@@ -5,6 +5,9 @@
     <modules>
         <module>../onlineEdu-base</module>
         <module>../onlineEdu-content</module>
+        <module>../onlineEdu-gateway</module>
+        <module>../onlineEdu-Gateway</module>
+        <module>../onlineEdu-media</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

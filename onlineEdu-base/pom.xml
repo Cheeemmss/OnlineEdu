@@ -12,11 +12,14 @@
 
     <artifactId>onlineEdu-base</artifactId>
     <packaging>pom</packaging>
-    <modules>
-        <module>../onlineEdu-Gateway</module>
-    </modules>
+
 
     <dependencies>
+        <dependency>
+            <groupId>com.j256.simplemagic</groupId>
+            <artifactId>simplemagic</artifactId>
+            <version>1.17</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

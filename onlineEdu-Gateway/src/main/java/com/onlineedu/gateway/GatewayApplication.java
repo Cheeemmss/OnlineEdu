@@ -1,14 +1,12 @@
-package com.onlineedu;
+package com.onlineedu.gateway;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 /**
  * @Author cheems
- * @Date 2023/1/30 20:31
+ * @Date 2023/2/1 22:23
  */
-@EnableDiscoveryClient
 @SpringBootApplication
 public class GatewayApplication {
 
