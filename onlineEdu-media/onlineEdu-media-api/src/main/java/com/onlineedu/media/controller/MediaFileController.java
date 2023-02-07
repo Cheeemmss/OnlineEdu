@@ -28,8 +28,7 @@ import static com.onlineedu.base.model.SystemStatus.FILE_TYPE_OTHER;
 @Api(tags = "媒资模块")
 @Slf4j
 @RestController
-@RequestMapping("/media")
-public class MediaController {
+public class MediaFileController {
 
     @Resource
     private MediaFilesService mediaFilesService;
@@ -41,7 +40,7 @@ public class MediaController {
     }
 
     @ApiOperation("上传文件(图片&&其他)")
-    @PostMapping(value = "/upload/files",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/upload/file",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public Result upload(@RequestPart("file") MultipartFile multipartFile,
                          @RequestParam(value = "folder",required = false) String folder,
                          @RequestParam(value = "objectName",required = false) String objectName) throws Exception {

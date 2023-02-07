@@ -21,4 +21,12 @@ public interface MediaFilesService extends IService<MediaFiles> {
     UploadFileResultDto upload(Long companyId, UploadFileParamsDto uploadFileParamsDto, byte[] bytes, String folder, String objectName) throws  Exception;
 
     MediaFiles saveFileMessageToDb(Long companyId, String md5, UploadFileParamsDto uploadFileParamsDto, String bucketFiles, String objectName) throws BusinessException;
+
+    Result checkFileIsExistByMd5(String fileMd5);
+
+    Result checkChunkFileIsExistByMd5(String fileMd5,Integer chunkIndex) throws BusinessException;
+
+    Result uploadChunkFile(byte[] bytes, Integer chunkIndex, String fileMd5) throws BusinessException;
+
+    Result mergeChunkFiles(Long companyId,String fileMd5, Integer chunkNum,UploadFileParamsDto uploadFileParamsDto) throws BusinessException;
 }
