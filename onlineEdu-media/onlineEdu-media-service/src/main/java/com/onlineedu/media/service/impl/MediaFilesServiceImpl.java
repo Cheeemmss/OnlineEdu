@@ -305,6 +305,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         RandomAccessFile reader = null;
         try {
             mergeFile =  File.createTempFile(filename, extension);
+            log.info("mergeFile temp path:{}",mergeFile.getAbsolutePath());
             writer = new RandomAccessFile(mergeFile, "rw");
             for (File chunkFile : chunkFiles) {
                 reader = new RandomAccessFile(chunkFile, "r");
@@ -313,6 +314,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
                 while ((len = reader.read(buffer)) != -1){
                     writer.write(buffer,0,len);
                 }
+                reader.close(); //这里的reader流必须开一个 用完关一个 不能在最后关 那样只会关最后一个流 导致前面创建的临时文件删除不掉
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -324,24 +326,18 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
                     e.printStackTrace();
                 }
             }
-            if(reader != null){
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
         //3. 检查合并后的文件和原来的文件的md5是否相同
-        String mergeFileMd5 = MD5.create().digestHex(mergeFile);
+        String mergeFileMd5 = DigestUtil.md5Hex(mergeFile);
         if(!fileMd5.equals(mergeFileMd5)){
+            log.info("上传失败: 文件md5匹配不上");
             throw new BusinessException(CODE_UNKOWN_ERROR,"合并失败");
         }
         uploadFileParamsDto.setFileSize(mergeFile.length());
 
         //4. 上传合并后的文件至minio
         byte[] bytes = FileUtil.readBytes(mergeFile);
-        String mergeObjectName = fileMd5.charAt(0) + "/" + fileMd5.charAt(1) + "/" + fileMd5 + extension;
+        String mergeObjectName = fileMd5.charAt(0) + "/" + fileMd5.charAt(1) + "/" + fileMd5 + "/" + fileMd5 + extension;
         try {
             uploadFileToMinio(bytes,videoFiles,mergeObjectName);
             //5. 保存文件信息到数据库
@@ -352,7 +348,8 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
             //6. 删除临时文件
             for (File file : chunkFiles) {
                 if(file.exists()){
-                    file.delete();
+                    boolean delete = file.delete();
+                    log.info("删除临时文件:{} delete:{}",file.getAbsolutePath(),delete);
                 }
             }
             if(mergeFile.exists()){
@@ -362,7 +359,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         return Result.success(true);
     }
 
-    //从minio把某个大文件的所有分片文件下载保存为本地临时文件 返回这些本地临时文件对应的file对象的数组
+    //从minio把某个大文件的所有分片文件下载保存为本地临时文件 返回这些本地临时文件对应的File对象的数组
     private File[] getChunkFiles(String fileMd5,Integer chunkNum) throws BusinessException {
         String chunkFolder = generateFolderByFileMd5(fileMd5);
         File[] chunkFiles = new File[chunkNum];
