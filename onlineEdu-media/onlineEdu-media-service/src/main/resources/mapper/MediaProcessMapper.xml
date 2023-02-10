@@ -23,4 +23,12 @@
         create_date,finish_date,url,
         errormsg
     </sql>
+    <select id="selectListByShardIndex" resultType="com.onlineedu.media.model.entities.MediaProcess">
+        SELECT
+            t.*
+        FROM
+            media_process t
+        WHERE
+            t.id % #{shardTotal} = #{shardIndex} and t.status='1' limit #{count}
+    </select>
 </mapper>

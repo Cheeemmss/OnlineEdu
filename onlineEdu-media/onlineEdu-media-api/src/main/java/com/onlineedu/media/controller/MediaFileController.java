@@ -64,4 +64,10 @@ public class MediaFileController {
         return Result.success(uploadFileResultDto);
     }
 
+    @ApiOperation("文件预览")
+    @GetMapping("/preview/{mediaId}")
+    public Result mediaPreview(@PathVariable("mediaId") String mediaId) throws BusinessException {
+        return mediaFilesService.getMediaUrlById(mediaId);
+    }
+
 }

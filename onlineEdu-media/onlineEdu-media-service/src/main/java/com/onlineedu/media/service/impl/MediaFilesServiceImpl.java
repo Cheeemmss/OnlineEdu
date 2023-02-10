@@ -17,10 +17,12 @@ import com.onlineedu.base.model.PageParams;
 import com.onlineedu.base.model.Result;
 import com.onlineedu.base.model.SystemCode;
 import com.onlineedu.media.mapper.MediaFilesMapper;
+import com.onlineedu.media.mapper.MediaProcessMapper;
 import com.onlineedu.media.model.dto.QueryMediaParamsDto;
 import com.onlineedu.media.model.dto.UploadFileParamsDto;
 import com.onlineedu.media.model.dto.UploadFileResultDto;
 import com.onlineedu.media.model.entities.MediaFiles;
+import com.onlineedu.media.model.entities.MediaProcess;
 import com.onlineedu.media.service.MediaFilesService;
 import com.sun.org.apache.bcel.internal.generic.NEW;
 import io.minio.*;
@@ -43,6 +45,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 import static com.onlineedu.base.model.SystemCode.CODE_UNKOWN_ERROR;
+import static com.onlineedu.base.model.SystemStatus.MEDIA_PROCESS_UN_PROCESS;
 import static com.onlineedu.base.model.SystemStatus.PUBLIC_STATUS_USING;
 
 /**
@@ -60,6 +63,9 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
 
     @Resource
     private MediaFilesMapper mediaFilesMapper;
+
+    @Resource
+    private MediaProcessMapper mediaProcessMapper;
 
     @Lazy
     @Resource
@@ -154,6 +160,27 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     }
 
     /**
+     * 上传文件至 minio
+     * @param filePath 要上传的文件的本地路径
+     * @param bucketName 文件要存储的bucket
+     * @param objectName object名称(路径+名称)
+     */
+    public void uploadFileToMinio(String filePath, String bucketName, String objectName) throws Exception {
+        try {
+            UploadObjectArgs uploadObjectArgs = UploadObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(objectName)
+                    .filename(filePath)
+                    .build();
+
+            minioClient.uploadObject(uploadObjectArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new BusinessException(CODE_UNKOWN_ERROR,"文件上传失败");
+        }
+    }
+
+    /**
      * 保存文件信息到数据库
      * @param companyId 机构ID
      * @param fileMd5 文件MD5值
@@ -173,13 +200,31 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
             mediaFiles.setFileId(fileMd5);
             mediaFiles.setCompanyId(companyId);
             mediaFiles.setFilePath(objectName);
-            mediaFiles.setUrl("/" + bucket + "/" + objectName); //文件的访问路径 bucket名 + 文件路径 + 文件对象名
+
+            String filename = mediaFiles.getFilename();
+            String extension = filename.substring(filename.lastIndexOf("."));
+            String fileType = getMimeTypeByExtension(extension);
+            //只有图片类型和mp4类型才可以直接设置访问url(如avi格式需要转码后才可设置)
+            if(fileType.contains("image") || fileType.contains("mp4")){
+                mediaFiles.setUrl("/" + bucket + "/" + objectName); //文件的访问路径 bucket名 + 文件路径 + 文件对象名
+            }
             mediaFiles.setBucket(bucket);
             mediaFiles.setCreateDate(new Date());
             mediaFiles.setStatus(PUBLIC_STATUS_USING);
             int insert = mediaFilesMapper.insert(mediaFiles);
             if(insert <= 0){
                 throw new BusinessException(CommonError.INSERT_EXCEPTION);
+            }
+
+            //若是avi格式的视频需要添加 到待处理表中
+            if(fileType.contains("video/x-msvideo")){
+                MediaProcess mediaProcess = new MediaProcess();
+                BeanUtil.copyProperties(mediaFiles,mediaProcess,"id");
+                mediaProcess.setStatus(MEDIA_PROCESS_UN_PROCESS); //设为未处理
+                int ins = mediaProcessMapper.insert(mediaProcess);
+                if(ins <= 0){
+                    throw new BusinessException(CommonError.INSERT_EXCEPTION);
+                }
             }
         }
         return mediaFiles;
@@ -284,6 +329,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         return Result.success(false);
     }
 
+
     /**
      * 合并分块
      * @param companyId 机构id
@@ -343,6 +389,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
             //5. 保存文件信息到数据库
             saveFileMessageToDb(companyId, mergeFileMd5, uploadFileParamsDto, videoFiles, mergeObjectName);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new BusinessException(CODE_UNKOWN_ERROR,"文件上传失败");
         }finally {
             //6. 删除临时文件
@@ -384,7 +431,8 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
      * @param objectName object名
      * @return 本地的文件对应的file对象
      */
-    private File downloadFileFromMinio(File file,String bucket,String objectName) throws BusinessException {
+    @Override
+    public File downloadFileFromMinio(File file,String bucket,String objectName) throws BusinessException {
         GetObjectArgs getObjectArgs = GetObjectArgs.builder()
                 .bucket(bucket)
                 .object(objectName)
@@ -422,6 +470,18 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
     private String generateFolderByFileMd5(String fileMd5){
         return fileMd5.charAt(0) + "/" + fileMd5.charAt(1) + "/" + fileMd5 + "/chunkFiles/";
     };
+
+    @Override
+    public Result getMediaUrlById(String mediaId) throws BusinessException {
+        MediaFiles mediaFile = mediaFilesMapper.selectById(mediaId);
+        if(mediaFile == null){
+            throw new BusinessException(CODE_UNKOWN_ERROR,"该文件不存在");
+        }
+        if(mediaFile.getUrl() == null){
+            throw new BusinessException(CODE_UNKOWN_ERROR,"该文件还未被转码处理 请稍后");
+        }
+        return Result.success(mediaFile.getUrl());
+    }
 }
 
 

@@ -83,7 +83,21 @@ public abstract class SystemStatus {
      */
     public static final String FILE_TYPE_OTHER = "001003";
 
+    /**
+     * 待处理文件状态-未处理
+     */
+    public static final String MEDIA_PROCESS_UN_PROCESS = "1";
 
+
+    /**
+     * 待处理文件状态-处理成功
+     */
+    public static final String MEDIA_PROCESS_PROCESS_SUCCESS = "2";
+
+    /**
+     * 待处理文件状态-处理失败
+     */
+    public static final String MEDIA_PROCESS_PROCESS_FAIL = "3";
 
 
 }

@@ -9,6 +9,8 @@ import com.onlineedu.media.model.dto.UploadFileParamsDto;
 import com.onlineedu.media.model.dto.UploadFileResultDto;
 import com.onlineedu.media.model.entities.MediaFiles;
 
+import java.io.File;
+
 /**
 * @author cheems
 * @description 针对表【media_files(媒资信息)】的数据库操作Service
@@ -29,4 +31,10 @@ public interface MediaFilesService extends IService<MediaFiles> {
     Result uploadChunkFile(byte[] bytes, Integer chunkIndex, String fileMd5) throws BusinessException;
 
     Result mergeChunkFiles(Long companyId,String fileMd5, Integer chunkNum,UploadFileParamsDto uploadFileParamsDto) throws BusinessException;
+
+    Result getMediaUrlById(String mediaId) throws BusinessException;
+
+    File downloadFileFromMinio(File file, String bucket, String objectName) throws BusinessException;
+
+    public void uploadFileToMinio(String filePath, String bucketName, String objectName) throws Exception;
 }

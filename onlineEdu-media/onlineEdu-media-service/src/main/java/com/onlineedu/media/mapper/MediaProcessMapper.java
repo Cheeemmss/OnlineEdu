@@ -3,6 +3,9 @@ package com.onlineedu.media.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.onlineedu.media.model.entities.MediaProcess;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author cheems
@@ -12,6 +15,9 @@ import org.apache.ibatis.annotations.Mapper;
 */
 @Mapper
 public interface MediaProcessMapper extends BaseMapper<MediaProcess> {
+
+
+    List<MediaProcess> selectListByShardIndex(@Param("shardIndex") int shardIndex, @Param("shardTotal") int shardTotal, @Param("count") int count);
 
 }
 
