@@ -45,8 +45,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 import static com.onlineedu.base.model.SystemCode.CODE_UNKOWN_ERROR;
-import static com.onlineedu.base.model.SystemStatus.MEDIA_PROCESS_UN_PROCESS;
-import static com.onlineedu.base.model.SystemStatus.PUBLIC_STATUS_USING;
+import static com.onlineedu.base.model.SystemStatus.*;
 
 /**
 * @author cheems
@@ -180,6 +179,18 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         }
     }
 
+    @Override
+    public Result getAuditedMediasList(Long companyId,String mediaName) {
+        LambdaQueryWrapper<MediaFiles> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MediaFiles::getCompanyId,companyId)
+                .eq(MediaFiles::getAuditStatus,OBJECT_AUDIT_SUCCESS)
+                .eq(MediaFiles::getFileType,FILE_TYPE_VIDEO)
+                .like(MediaFiles::getFilename,mediaName)
+                .orderByDesc(MediaFiles::getCreateDate);
+
+        return Result.success("",mediaFilesMapper.selectList(wrapper));
+    }
+
     /**
      * 保存文件信息到数据库
      * @param companyId 机构ID
@@ -211,6 +222,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
             mediaFiles.setBucket(bucket);
             mediaFiles.setCreateDate(new Date());
             mediaFiles.setStatus(PUBLIC_STATUS_USING);
+            mediaFiles.setAuditStatus(OBJECT_AUDIT_NOT_AUDIT);
             int insert = mediaFilesMapper.insert(mediaFiles);
             if(insert <= 0){
                 throw new BusinessException(CommonError.INSERT_EXCEPTION);
@@ -480,7 +492,7 @@ public class MediaFilesServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFi
         if(mediaFile.getUrl() == null){
             throw new BusinessException(CODE_UNKOWN_ERROR,"该文件还未被转码处理 请稍后");
         }
-        return Result.success(mediaFile.getUrl());
+        return Result.success("",mediaFile.getUrl());
     }
 }
 

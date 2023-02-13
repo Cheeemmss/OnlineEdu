@@ -70,4 +70,11 @@ public class MediaFileController {
         return mediaFilesService.getMediaUrlById(mediaId);
     }
 
+    @ApiOperation("查询该机构内所有已审核通过的媒资")
+    @GetMapping("/list/auditMedias")
+    public Result listAuditedMedias(@RequestParam("mediaName") String mediaName){
+        Long companyId = 12L;
+        return mediaFilesService.getAuditedMediasList(companyId,mediaName);
+    }
+
 }

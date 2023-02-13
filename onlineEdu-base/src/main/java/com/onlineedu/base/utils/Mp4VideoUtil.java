@@ -41,7 +41,7 @@ public class Mp4VideoUtil extends VideoUtil {
         commend.add(video_path);
         commend.add("-c:v");
         commend.add("libx264");
-        commend.add("-y");//覆盖输出文件
+        commend.add("-y");         //覆盖输出文件
         commend.add("-s");
         commend.add("1280x720");
         commend.add("-pix_fmt");
@@ -52,6 +52,8 @@ public class Mp4VideoUtil extends VideoUtil {
         commend.add("753k");
         commend.add("-r");
         commend.add("18");
+        commend.add("-threads"); //限制占用的线程数 减少cpu占用
+        commend.add("2");
 //        commend.add(mp4folder_path  + mp4_name );
         commend.add(mp4folder_path);
         String outstring = null;
@@ -79,11 +81,11 @@ public class Mp4VideoUtil extends VideoUtil {
         //ffmpeg的路径
         String ffmpeg_path = "F:\\ffmpeg\\ffmpeg-n5.1.2-4-win64-gpl-5.1\\bin\\ffmpeg.exe";//ffmpeg的安装位置
         //源avi视频的路径
-        String video_path = "I:\\resources\\a1.avi";
+        String video_path = "I:\\resources\\122-尚硅谷-图解Java设计模式-观察者模式(6)-内容梳理.avi";
         //转换后mp4文件的名称
-        String mp4_name = "a1.mp4";
+        String mp4_name = "test.mp4";
         //转换后mp4文件的路径
-        String mp4_path = "I:\\resources\\a1.mp4";
+        String mp4_path = "I:\\resources\\test.mp4";
         //创建工具类对象
         Mp4VideoUtil videoUtil = new Mp4VideoUtil(ffmpeg_path,video_path,mp4_name,mp4_path);
         //开始视频转换，成功将返回success

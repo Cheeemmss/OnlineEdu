@@ -37,4 +37,6 @@ public interface MediaFilesService extends IService<MediaFiles> {
     File downloadFileFromMinio(File file, String bucket, String objectName) throws BusinessException;
 
     public void uploadFileToMinio(String filePath, String bucketName, String objectName) throws Exception;
+
+    Result getAuditedMediasList(Long companyId,String mediaName);
 }

@@ -99,5 +99,20 @@ public abstract class SystemStatus {
      */
     public static final String MEDIA_PROCESS_PROCESS_FAIL = "3";
 
+    /**
+     * 对象的审核状态-审核未通过
+     */
+    public static final String OBJECT_AUDIT_FAIL = "002001";
+
+    /**
+     * 对象的审核状态-未审核
+     */
+    public static final String OBJECT_AUDIT_NOT_AUDIT = "002002";
+
+    /**
+     * 对象的审核状态-审核通过
+     */
+    public static final String OBJECT_AUDIT_SUCCESS= "002003";
+
 
 }

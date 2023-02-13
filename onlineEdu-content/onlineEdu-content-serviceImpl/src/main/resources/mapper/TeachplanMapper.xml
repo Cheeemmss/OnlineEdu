@@ -86,6 +86,7 @@
             two.pname two_pname,
             two.parentid two_parentid,
             two.grade two_grade,
+            two.is_preview isPreview,
             two.media_type two_mediaType,
             two.start_time two_stratTime,
             two.end_time two_endTime,

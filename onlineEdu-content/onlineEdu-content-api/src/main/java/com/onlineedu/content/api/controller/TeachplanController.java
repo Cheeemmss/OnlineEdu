@@ -2,6 +2,7 @@ package com.onlineedu.content.api.controller;
 
 import com.onlineedu.base.exception.BusinessException;
 import com.onlineedu.base.model.Result;
+import com.onlineedu.content.model.dto.BindTeachplanMediaDto;
 import com.onlineedu.content.model.dto.SaveTeachPlanDto;
 import com.onlineedu.content.service.TeachplanService;
 import io.swagger.annotations.Api;
@@ -34,5 +35,11 @@ public class TeachplanController {
     @PostMapping("/saveTeachPlan")
     public Result saveTeachPlan(@RequestBody SaveTeachPlanDto saveTeachPlanDto) throws BusinessException {
            return teachplanService.saveTeachPlan(saveTeachPlanDto);
+    }
+
+    @ApiOperation("绑定课程对应的视频")
+    @PostMapping("/binding")
+    public Result bindingCourseVideo(@RequestBody BindTeachplanMediaDto bindTeachplanMediaDto) throws BusinessException {
+        return teachplanService.bindingCourseVideo(bindTeachplanMediaDto);
     }
 }
