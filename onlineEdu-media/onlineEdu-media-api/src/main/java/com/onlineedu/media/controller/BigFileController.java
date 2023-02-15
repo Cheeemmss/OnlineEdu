@@ -1,18 +1,18 @@
 package com.onlineedu.media.controller;
 
+
 import com.onlineedu.base.exception.BusinessException;
 import com.onlineedu.base.model.Result;
 import com.onlineedu.media.model.dto.UploadFileParamsDto;
 import com.onlineedu.media.service.MediaFilesService;
+import groovy.util.logging.Slf4j;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 
 import static com.onlineedu.base.model.SystemStatus.FILE_TYPE_VIDEO;
 

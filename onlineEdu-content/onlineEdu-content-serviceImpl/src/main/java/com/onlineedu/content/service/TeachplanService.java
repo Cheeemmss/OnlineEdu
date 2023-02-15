@@ -5,8 +5,11 @@ import com.onlineedu.base.exception.BusinessException;
 import com.onlineedu.base.model.Result;
 import com.onlineedu.content.model.dto.BindTeachplanMediaDto;
 import com.onlineedu.content.model.dto.SaveTeachPlanDto;
+import com.onlineedu.content.model.dto.TeachplanDto;
 import com.onlineedu.content.model.entities.Teachplan;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
 * @author cheems
@@ -16,7 +19,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 public interface TeachplanService extends IService<Teachplan> {
 
-    Result getPlanTreeNodes(Long courseId);
+    List<TeachplanDto> getPlanTreeNodes(Long courseId);
 
     /**
      * 添加/修改课程计划

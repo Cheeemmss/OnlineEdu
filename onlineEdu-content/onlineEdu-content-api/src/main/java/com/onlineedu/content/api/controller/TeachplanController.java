@@ -28,7 +28,7 @@ public class TeachplanController {
     @ApiOperation("获取课程计划树")
     @GetMapping("/treeNodes/{courseId}")
     public Result getTreeNodes(@PathVariable Long courseId){
-           return teachplanService.getPlanTreeNodes(courseId);
+           return Result.success(teachplanService.getPlanTreeNodes(courseId));
     }
 
     @ApiOperation("添加/修改课程计划")

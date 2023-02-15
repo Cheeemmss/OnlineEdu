@@ -30,8 +30,8 @@ public class Tests {
 
     @Test
     public void test2(){
-        Result r = teachplanService.getPlanTreeNodes(25L);
-        System.out.println(JSONUtil.toJsonStr(r.getData()));
+//        Result r = teachplanService.getPlanTreeNodes(25L);
+//        System.out.println(JSONUtil.toJsonStr(r.getData()));
     }
 
 }

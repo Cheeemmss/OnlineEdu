@@ -42,9 +42,9 @@ public class TeachplanServiceImpl extends ServiceImpl<TeachplanMapper, Teachplan
     private static final Integer TEACH_PLAN_GRAD_TWO = 2;
 
     @Override
-    public Result getPlanTreeNodes(Long courseId) {
+    public List<TeachplanDto> getPlanTreeNodes(Long courseId) {
         List<TeachplanDto> teachplanDtos = teachplanMapper.selectTeachPlanByCourseId(courseId);
-        return Result.success(teachplanDtos);
+        return teachplanDtos;
     }
 
     @Override
