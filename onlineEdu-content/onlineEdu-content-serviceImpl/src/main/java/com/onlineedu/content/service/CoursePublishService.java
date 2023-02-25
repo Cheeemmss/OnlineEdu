@@ -1,6 +1,7 @@
 package com.onlineedu.content.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.onlineedu.base.exception.BusinessException;
 import com.onlineedu.content.model.dto.CoursePreviewDto;
 import com.onlineedu.content.model.entities.CoursePublish;
 import org.apache.ibatis.annotations.Mapper;
@@ -13,6 +14,10 @@ import org.apache.ibatis.annotations.Mapper;
 
 public interface CoursePublishService extends IService<CoursePublish> {
 
-    public CoursePreviewDto getCoursePreviewInfo(Long courseId);
+     CoursePreviewDto getCoursePreviewInfo(Long courseId);
+
+     void commitAudit(Long companyId,Long courseId) throws BusinessException;
+
+     public void publish(Long companyId,Long courseId) throws BusinessException;
 
 }
