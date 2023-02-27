@@ -4,7 +4,9 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.onlineedu.base.exception.BusinessException;
+import com.onlineedu.base.exception.CommonError;
 import com.onlineedu.base.model.SystemCode;
+import com.onlineedu.content.config.MultipartSupportConfig;
 import com.onlineedu.content.mapper.CourseBaseMapper;
 import com.onlineedu.content.mapper.CourseMarketMapper;
 import com.onlineedu.content.mapper.CoursePublishMapper;
@@ -16,21 +18,39 @@ import com.onlineedu.content.model.entities.*;
 import com.onlineedu.content.service.CourseBaseService;
 import com.onlineedu.content.service.CoursePublishService;
 import com.onlineedu.content.service.TeachplanService;
+import com.onlineedu.content.service.feignClient.MediaServiceClient;
+import com.onlineedu.content.service.handler.CoursePublishTask;
+import com.onlineedu.messagesdk.model.po.MqMessage;
+import com.onlineedu.messagesdk.service.MqMessageService;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
 * @author cheems
 * @description 针对表【course_publish(课程发布)】的数据库操作Service实现
 * @createDate 2023-01-19 14:15:57
 */
+
+@Slf4j
 @Service
 public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, CoursePublish>
     implements CoursePublishService{
@@ -53,9 +73,16 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
     @Resource
     private CoursePublishMapper coursePublishMapper;
 
+    @Resource
+    private MqMessageService mqMessageService;
+
+    @Resource
+    private MediaServiceClient mediaServiceClient;
+
     @Override
     public CoursePreviewDto
 
+    //获取课程的基本信息 营销信息 课程计划 (老师信息)
     getCoursePreviewInfo(Long courseId) {
         CourseBaseInfoDto courseBaseInfoDto = (CourseBaseInfoDto) courseBaseService.getCourseBaseInfoById(courseId).getData();
         List<TeachplanDto> planTreeNodes = teachplanService.getPlanTreeNodes(courseId);
@@ -127,6 +154,7 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
         courseBaseMapper.updateById(courseBase);
     }
 
+    //发布课程
     @Transactional
     @Override
     public void publish(Long companyId, Long courseId) throws BusinessException {
@@ -161,8 +189,11 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
 
     }
 
-    private void saveCoursePublishMessage(Long courseId)  {
-
+    private void saveCoursePublishMessage(Long courseId) throws BusinessException {
+        MqMessage mqMessage = mqMessageService.addMessage(CoursePublishTask.MESSAGE_TYPE, String.valueOf(courseId), null, null);
+        if(mqMessage==null){
+           throw new BusinessException(SystemCode.CODE_UNKOWN_ERROR,"课程发布任务加入失败");
+        }
     }
 
     private void saveCoursePublish(Long courseId) throws BusinessException {
@@ -188,6 +219,79 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
         CourseBase courseBase = courseBaseMapper.selectById(courseId);
         courseBase.setStatus("203002");
         courseBaseMapper.updateById(courseBase);
+    }
+
+    /**
+     * 根据ftl文件生成课程的静态文件
+     * @param courseId
+     * @return 生成成功返回生成的文件对应的File对象 生成失败返回Null
+     */
+    @Override
+    public File generateCourseHtml(Long courseId) {
+
+        //静态化文件
+        File htmlFile  = null;
+        FileOutputStream outputStream = null;
+        try {
+            //配置freemarker
+            Configuration configuration = new Configuration(Configuration.getVersion());
+
+            //加载模板
+            //选指定模板路径,classpath下templates下
+            //得到classpath路径
+            configuration.setClassForTemplateLoading(this.getClass(),"/templates/");
+            //设置字符编码
+            configuration.setDefaultEncoding("utf-8");
+
+            //指定模板文件名称
+            Template template = configuration.getTemplate("course_template.ftl");
+
+            //准备数据
+            CoursePreviewDto coursePreviewInfo = this.getCoursePreviewInfo(courseId);
+
+            Map<String, Object> map = new HashMap<>();
+            map.put("model", coursePreviewInfo);
+
+            //静态化
+            //参数1：模板，参数2：数据模型
+            String content = FreeMarkerTemplateUtils.processTemplateIntoString(template, map);
+//            System.out.println(content);
+            //将静态化内容输出到文件中
+            InputStream inputStream = IOUtils.toInputStream(content);
+            //创建静态化文件
+            htmlFile = File.createTempFile("course",".html");
+            log.debug("课程静态化，生成静态文件:{}",htmlFile.getAbsolutePath());
+            //输出流
+            outputStream =  new FileOutputStream(htmlFile);
+            IOUtils.copy(inputStream, outputStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }finally {
+            if(htmlFile != null){
+                if(htmlFile.exists()){
+                    htmlFile.delete();
+                }
+            }
+            if(outputStream != null){
+                try {
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return htmlFile;
+    }
+
+    //将生成的课程静态html页面上传到minio
+    @Override
+    public void uploadCourseHtml(Long courseId, File file) throws BusinessException {
+        MultipartFile multipartFile = MultipartSupportConfig.getMultipartFile(file);
+        String result = mediaServiceClient.uploadFile(multipartFile, "course", courseId + ".html");
+        if(result == null){
+            throw new BusinessException(SystemCode.CODE_UNKOWN_ERROR,"远程调用媒资上传静态页面失败");
+        }
     }
 }
 

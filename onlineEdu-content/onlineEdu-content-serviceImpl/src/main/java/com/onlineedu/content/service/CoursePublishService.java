@@ -6,6 +6,8 @@ import com.onlineedu.content.model.dto.CoursePreviewDto;
 import com.onlineedu.content.model.entities.CoursePublish;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.io.File;
+
 /**
 * @author cheems
 * @description 针对表【course_publish(课程发布)】的数据库操作Service
@@ -19,5 +21,9 @@ public interface CoursePublishService extends IService<CoursePublish> {
      void commitAudit(Long companyId,Long courseId) throws BusinessException;
 
      public void publish(Long companyId,Long courseId) throws BusinessException;
+
+     public File generateCourseHtml(Long courseId);
+
+     public void  uploadCourseHtml(Long courseId, File file) throws BusinessException;
 
 }
