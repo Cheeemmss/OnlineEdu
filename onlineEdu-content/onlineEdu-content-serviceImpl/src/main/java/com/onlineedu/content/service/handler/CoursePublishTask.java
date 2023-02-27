@@ -67,8 +67,7 @@ public class CoursePublishTask extends MessageProcessAbstract {
         log.debug("开始进行课程静态化,课程id:{}",courseId);
         //消息id
         Long id = mqMessage.getId();
-        //消息处理的service
-        MqMessageService mqMessageService = this.getMqMessageService();
+
         //消息幂等性处理 第一阶段(上传静态页面干过了就不用再干了)
         int stageOne = mqMessageService.getStageOne(id);
         if(stageOne>0){

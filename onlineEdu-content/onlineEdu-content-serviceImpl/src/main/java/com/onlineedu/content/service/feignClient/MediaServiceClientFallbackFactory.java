@@ -9,6 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @Author cheems
  * @Date 2023/2/27 17:48
  */
+
 @Slf4j
 @Component
 public class MediaServiceClientFallbackFactory implements FallbackFactory<MediaServiceClient> {

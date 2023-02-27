@@ -92,7 +92,7 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
         return coursePreviewDto;
     }
 
-    //提交审核
+    //提交审核  (保存到预发布表中供运营人员审核 修改课程审核状态)
     @Override
     public void commitAudit(Long companyId, Long courseId) throws BusinessException {
 
@@ -154,7 +154,7 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
         courseBaseMapper.updateById(courseBase);
     }
 
-    //发布课程
+    //发布课程 (该接口只做一件事情 从预发布表中找到该课程并删除记录 加入到正式发布表中 然后往xxl-job添加任务 其他的(静态页面 缓存 索引交给定时任务))
     @Transactional
     @Override
     public void publish(Long companyId, Long courseId) throws BusinessException {
@@ -181,7 +181,7 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
         //保存课程发布信息
         saveCoursePublish(courseId);
 
-        //保存消息表
+        //保存消息表(xxl-job会从这个表里面去读发布的任务然后执行)
         saveCoursePublishMessage(courseId);
 
         //删除课程预发布表对应记录

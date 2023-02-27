@@ -1,6 +1,7 @@
 package com.onlineedu.content.api.controller;
 
 import com.onlineedu.base.exception.BusinessException;
+import com.onlineedu.base.model.Result;
 import com.onlineedu.content.model.dto.CoursePreviewDto;
 import com.onlineedu.content.service.CoursePublishService;
 import io.swagger.annotations.ApiOperation;
@@ -34,19 +35,22 @@ public class CoursePublishController {
         return modelAndView;
     }
 
+    @ApiOperation("课程提交审核")
     @ResponseBody
     @PostMapping("/courseaudit/commit/{courseId}")
-    public void commitAudit(@PathVariable("courseId") Long courseId) throws BusinessException {
+    public Result commitAudit(@PathVariable("courseId") Long courseId) throws BusinessException {
         Long companyId = 12L;
         coursePublishService.commitAudit(companyId,courseId);
+        return Result.success("提交审核成功");
     }
 
     @ApiOperation("课程发布")
     @ResponseBody
     @PostMapping ("/coursepublish/{courseId}")
-    public void coursepublish(@PathVariable("courseId") Long courseId) throws BusinessException {
+    public Result coursepublish(@PathVariable("courseId") Long courseId) throws BusinessException {
         Long companyId = 12L;
         coursePublishService.publish(companyId,courseId);
+        return Result.success("课程发布中,请稍后查看");
     }
 
 }
