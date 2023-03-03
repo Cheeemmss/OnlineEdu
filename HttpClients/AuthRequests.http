@@ -2,3 +2,7 @@
 #申请令牌
 POST http://localhost:63070/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username={"username":"admin","authType":"password","password":"111111"}
 
+###
+
+#生成验证码
+POST http://localhost:63075/checkcode/pic
