@@ -8,6 +8,7 @@
         <module>../onlineEdu-gateway</module>
         <module>../onlineEdu-Gateway</module>
         <module>../onlineEdu-media</module>
+        <module>../onlineEdu-auth</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>

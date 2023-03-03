@@ -20,9 +20,9 @@ spring:
           - data-id: mybatisPlus-common-${spring.profiles.active}.yaml
             group: online_edu
             refresh: true
-          - data-id: kinef4j-common-${spring.profiles.active}.yaml
-            group: online_edu
-            refresh: true
+#          - data-id: kinef4j-common-${spring.profiles.active}.yaml
+#            group: online_edu
+#            refresh: true
           - data-id: freemarker-config-${spring.profiles.active}.yaml
             group: online_edu
             refresh: true

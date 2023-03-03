@@ -3,7 +3,6 @@ package com.onlineedu.content.api.controller;
 import com.onlineedu.content.model.dto.CoursePreviewDto;
 import com.onlineedu.content.service.CourseBaseService;
 import com.onlineedu.content.service.CoursePublishService;
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +16,7 @@ import javax.annotation.Resource;
  * @Date 2023/2/15 16:01
  */
 
-@Api(value = "课程公开查询接口",tags = "课程公开查询接口")
+//@Api(value = "课程公开查询接口",tags = "课程公开查询接口")
 @RestController
 @RequestMapping("/open")
 public class CourseOpenController {

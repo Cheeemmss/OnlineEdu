@@ -4,7 +4,6 @@ import com.onlineedu.base.exception.BusinessException;
 import com.onlineedu.base.model.Result;
 import com.onlineedu.content.model.dto.CoursePreviewDto;
 import com.onlineedu.content.service.CoursePublishService;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +24,7 @@ public class CoursePublishController {
     @Resource
     private CoursePublishService coursePublishService;
 
-    @ApiOperation("课程预览")
+//    @ApiOperation("课程预览")
     @GetMapping("/coursepreview/{courseId}")
     public ModelAndView preview(@PathVariable("courseId") Long courseId){
         CoursePreviewDto coursePreviewInfo = coursePublishService.getCoursePreviewInfo(courseId);
@@ -35,7 +34,7 @@ public class CoursePublishController {
         return modelAndView;
     }
 
-    @ApiOperation("课程提交审核")
+//    @ApiOperation("课程提交审核")
     @ResponseBody
     @PostMapping("/courseaudit/commit/{courseId}")
     public Result commitAudit(@PathVariable("courseId") Long courseId) throws BusinessException {
@@ -44,7 +43,7 @@ public class CoursePublishController {
         return Result.success("提交审核成功");
     }
 
-    @ApiOperation("课程发布")
+//    @ApiOperation("课程发布")
     @ResponseBody
     @PostMapping ("/coursepublish/{courseId}")
     public Result coursepublish(@PathVariable("courseId") Long courseId) throws BusinessException {
