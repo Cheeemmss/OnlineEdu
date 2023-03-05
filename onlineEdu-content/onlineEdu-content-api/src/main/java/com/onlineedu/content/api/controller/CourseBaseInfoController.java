@@ -11,6 +11,7 @@ import com.onlineedu.content.model.dto.QueryCourseParamsDto;
 import com.onlineedu.content.model.entities.CourseBase;
 import com.onlineedu.content.service.CourseBaseService;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +31,7 @@ public class CourseBaseInfoController {
     private CourseBaseService courseBaseService;
 
 //    @ApiOperation("课程基本信息分页")
+    @PreAuthorize("hasAuthority('xc_sysmanager')")
     @PostMapping("/list")
     public Result list(PageParams pageParams, @RequestBody QueryCourseParamsDto queryCourseParamsDto){
         return courseBaseService.pageList(pageParams,queryCourseParamsDto);

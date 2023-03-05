@@ -12,7 +12,7 @@ import lombok.ToString;
 
  @Data
  @ToString
-public class RestResponse<T> {
+public class RestRes<T> {
 
   /**
    * 响应编码,0为正常,-1错误
@@ -30,11 +30,11 @@ public class RestResponse<T> {
   private T result;
 
 
-  public RestResponse() {
+  public RestRes() {
    this(0, "success");
   }
 
-  public RestResponse(int code, String msg) {
+  public RestRes(int code, String msg) {
    this.code = code;
    this.msg = msg;
   }
@@ -46,14 +46,14 @@ public class RestResponse<T> {
    * @param <T>
    * @return
    */
-  public static <T> RestResponse<T> validfail(String msg) {
-   RestResponse<T> response = new RestResponse<T>();
+  public static <T> RestRes<T> validfail(String msg) {
+   RestRes<T> response = new RestRes<T>();
    response.setCode(-1);
    response.setMsg(msg);
    return response;
   }
-  public static <T> RestResponse<T> validfail(T result,String msg) {
-   RestResponse<T> response = new RestResponse<T>();
+  public static <T> RestRes<T> validfail(T result, String msg) {
+   RestRes<T> response = new RestRes<T>();
    response.setCode(-1);
    response.setResult(result);
    response.setMsg(msg);
@@ -67,13 +67,13 @@ public class RestResponse<T> {
    *
    * @return RestResponse Rest服务封装相应数据
    */
-  public static <T> RestResponse<T> success(T result) {
-   RestResponse<T> response = new RestResponse<T>();
+  public static <T> RestRes<T> success(T result) {
+   RestRes<T> response = new RestRes<T>();
    response.setResult(result);
    return response;
   }
-  public static <T> RestResponse<T> success(T result,String msg) {
-   RestResponse<T> response = new RestResponse<T>();
+  public static <T> RestRes<T> success(T result, String msg) {
+   RestRes<T> response = new RestRes<T>();
    response.setResult(result);
    response.setMsg(msg);
    return response;
@@ -84,8 +84,8 @@ public class RestResponse<T> {
    *
    * @return RestResponse Rest服务封装相应数据
    */
-  public static <T> RestResponse<T> success() {
-   return new RestResponse<T>();
+  public static <T> RestRes<T> success() {
+   return new RestRes<T>();
   }
 
 

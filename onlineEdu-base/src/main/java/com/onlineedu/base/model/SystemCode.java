@@ -22,4 +22,9 @@ public abstract class SystemCode {
      */
     public static final String CODE_UNKOWN_ERROR = "500";
 
+    /**
+     * 无权限
+     */
+    public static final String CODE_NO_PERMISSION = "403";
+
 }

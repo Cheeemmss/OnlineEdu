@@ -22,9 +22,9 @@ public class WxLoginController {
     @Resource
     private WxAuthServiceImpl wxAuthService;
 
+    //用户确认授权后的回调地址
     @GetMapping("/api/ucenter/wx/callback")
     public String wxLogin(String code, String state){
-        log.info("code:{},state:{}",code,state);
         XcUser xcUser = wxAuthService.WxAuth(code);
         if(xcUser == null){
             return "redirect:http://www.51xuecheng.cn/error.html";
