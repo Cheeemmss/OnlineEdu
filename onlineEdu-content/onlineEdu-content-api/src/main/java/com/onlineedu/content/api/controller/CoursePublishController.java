@@ -3,6 +3,7 @@ package com.onlineedu.content.api.controller;
 import com.onlineedu.base.exception.BusinessException;
 import com.onlineedu.base.model.Result;
 import com.onlineedu.content.model.dto.CoursePreviewDto;
+import com.onlineedu.content.model.entities.CoursePublish;
 import com.onlineedu.content.service.CoursePublishService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,6 +51,14 @@ public class CoursePublishController {
         Long companyId = 12L;
         coursePublishService.publish(companyId,courseId);
         return Result.success("课程发布中,请稍后查看");
+    }
+
+//    @ApiOperation("查询课程发布信息")
+    @ResponseBody
+    @GetMapping("/r/coursepublish/{courseId}")
+    public CoursePublish getCoursepublish(@PathVariable("courseId") Long courseId) {
+        CoursePublish coursePublish = coursePublishService.getCoursePublish(courseId);
+        return coursePublish;
     }
 
 }

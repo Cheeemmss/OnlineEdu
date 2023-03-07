@@ -293,6 +293,12 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
             throw new BusinessException(SystemCode.CODE_UNKOWN_ERROR,"远程调用媒资上传静态页面失败");
         }
     }
+
+    @Override
+    public CoursePublish getCoursePublish(Long courseId){
+        CoursePublish coursePublish = coursePublishMapper.selectById(courseId);
+        return coursePublish ;
+    }
 }
 
 

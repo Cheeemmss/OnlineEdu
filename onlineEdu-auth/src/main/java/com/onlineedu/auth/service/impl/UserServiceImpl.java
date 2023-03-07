@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserDetailsService {
     public UserDetails getUserPrincipal(XcUserExt user){
         //用户权限,如果不加报Cannot pass a null GrantedAuthority collection
         List<XcMenu> permissionList = menuMapper.selectPermissionByUserId(user.getId());
-        log.info("list:{}",permissionList);
+//        log.info("list:{}",permissionList);
         String[] permissions = permissionList.stream().map(XcMenu::getCode).toArray(String[]::new);
         //为了安全在令牌中不放密码
         user.setPassword(null);

@@ -26,4 +26,5 @@ public interface CoursePublishService extends IService<CoursePublish> {
 
      public void  uploadCourseHtml(Long courseId, File file) throws BusinessException;
 
+    CoursePublish getCoursePublish(Long courseId);
 }

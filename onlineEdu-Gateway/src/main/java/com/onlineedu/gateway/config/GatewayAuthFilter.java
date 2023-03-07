@@ -32,6 +32,10 @@ import java.util.Set;
  * @date 2022/9/27 12:10
  */
 
+
+
+
+
 @Slf4j
 @Component
 public class GatewayAuthFilter implements GlobalFilter, Ordered {
@@ -48,12 +52,11 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
             Properties properties = new Properties();
             properties.load(resourceAsStream);
             Set<String> strings = properties.stringPropertyNames();
-            whitelist= new ArrayList<>(strings);
+            whitelist = new ArrayList<>(strings);
         } catch (Exception e) {
 //            log.info("加载/security-whitelist.properties出错:{}",e.getMessage());
             e.printStackTrace();
         }
-
 
     }
 
@@ -123,6 +126,7 @@ public class GatewayAuthFilter implements GlobalFilter, Ordered {
     }
 
 
+    //设置filter优先级
     @Override
     public int getOrder() {
         return 0;

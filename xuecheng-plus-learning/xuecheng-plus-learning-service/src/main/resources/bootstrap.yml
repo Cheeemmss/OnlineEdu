@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: learning-service
+  cloud:
+    nacos:
+      server-addr: 192.168.256.130:8848
+      discovery:
+        namespace: f2926904-cee3-40f1-9f87-359b91de1b55
+        group: online_edu
+      config:
+        namespace: f2926904-cee3-40f1-9f87-359b91de1b55
+        group: online_edu
+        file-extension: yaml
+        refresh-enabled: true
+        shared-configs:
+          - data-id: feign-${spring.profiles.active}.yaml
+            group: online_edu
+            refresh: true
+#          - data-id: rabbitmq-${spring.profiles.active}.yaml
+#            group: xuecheng-plus-common
+#            refresh: true
+
+  #profiles默认为dev
+  profiles:
+    active: dev
+
+
+

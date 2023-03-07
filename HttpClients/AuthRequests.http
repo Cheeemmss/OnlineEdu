@@ -4,5 +4,17 @@ POST http://localhost:63070/auth/oauth/token?client_id=XcWebApp&client_secret=Xc
 
 ###
 
+#校验jwt令牌
+POST http://localhost:63070/auth/oauth/check_token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsicmVzMSJdLCJ1c2VyX25hbWUiOiJzdHUxIiwic2NvcGUiOlsiYWxsIl0sImV4cCI6MTY2NDM3MTc4MCwiYXV0aG9yaXRpZXMiOlsicDEiXSwianRpIjoiZjBhM2NkZWItMzk5ZC00OGYwLTg4MDQtZWNhNjM4YWQ4ODU3IiwiY2xpZW50X2lkIjoiYzEifQ.qy46CSCJsH3eXWTHgdcntZhzcSzfRQlBU0dxAjZcsUw
+
+###
+
 #生成验证码
 POST http://localhost:63075/checkcode/pic
+
+###
+
+### 携带token访问资源服务
+GET http://localhost:63040/content/course/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsicmVzMSJdLCJ1c2VyX25hbWUiOiJ6aGFuZ3NhbiIsInNjb3BlIjpbImFsbCJdLCJleHAiOjE2NjQzMzM0OTgsImF1dGhvcml0aWVzIjpbInAxIl0sImp0aSI6IjhhM2M2OTk1LWU1ZGEtNDQ1Yy05ZDAyLTEwNDFlYzk3NTkwOSIsImNsaWVudF9pZCI6ImMxIn0.73eNDxTX5ifttGCjwc7xrd-Sbp_mCfcIerI3lGetZto
+
