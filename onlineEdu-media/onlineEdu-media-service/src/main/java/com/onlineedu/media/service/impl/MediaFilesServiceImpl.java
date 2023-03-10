@@ -24,7 +24,6 @@ import com.onlineedu.media.model.dto.UploadFileResultDto;
 import com.onlineedu.media.model.entities.MediaFiles;
 import com.onlineedu.media.model.entities.MediaProcess;
 import com.onlineedu.media.service.MediaFilesService;
-import com.sun.org.apache.bcel.internal.generic.NEW;
 import io.minio.*;
 import io.minio.errors.*;
 import lombok.extern.slf4j.Slf4j;

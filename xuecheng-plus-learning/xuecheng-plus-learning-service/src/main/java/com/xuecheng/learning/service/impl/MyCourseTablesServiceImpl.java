@@ -45,6 +45,13 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
     @Resource
     private ApplicationContext applicationContext;
 
+    /**
+     * 添加选课
+     * @param userId
+     * @param courseId
+     * @return 学习资格
+     * @throws BusinessException
+     */
     @Override
     public XcChooseCourseDto addChooseCourse(String userId, Long courseId) throws BusinessException {
         log.info(userId);
@@ -56,7 +63,7 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
         MyCourseTablesService myCourseTablesServiceProxy = applicationContext.getBean(MyCourseTablesService.class);
         XcChooseCourse xcChooseCourse = null;
         if("201000".equals(charge)){
-            //免费课程 添加选课记录表+我的课程表
+            //免费课程 添加选课记录表 + 我的课程表
              xcChooseCourse = myCourseTablesServiceProxy.addFreeCourse(userId, coursepublish);
         }else {
             //收费课程 只添加选课记录表
@@ -71,12 +78,18 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
         return xcChooseCourseDto;
     }
 
-    //添加免费课程,免费课程加入选课记录表、我的课程表
-    @Transactional
+    /**
+     * 添加免费课程 免费课程加入选课记录表 + 我的课程表
+     * @param userId
+     * @param coursepublish
+     * @return
+     * @throws BusinessException
+     */
+    @Transactional(rollbackFor = Exception.class)
     public XcChooseCourse addFreeCourse(String userId, CoursePublish coursepublish) throws BusinessException {
         LambdaQueryWrapper<XcChooseCourse> queryWrapper = new LambdaQueryWrapper<XcChooseCourse>().eq(XcChooseCourse::getUserId, userId)
                 .eq(XcChooseCourse::getCourseId, coursepublish.getId())
-                .eq(XcChooseCourse::getOrderType, "201000") //免费课程
+                .eq(XcChooseCourse::getOrderType, "700001") //免费课程
                 .eq(XcChooseCourse::getStatus, "701001");  //选课成功
 
         //看课程是否已添加过这门课若添加过直接返回
@@ -84,7 +97,7 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
         if(xcChooseCourses != null && xcChooseCourses.size() > 0){
             return xcChooseCourses.get(0);
         }
-        //没有则想选课记录表添加一条记录
+        //1. 没有则向选课记录表添加一条记录
         XcChooseCourse xcChooseCourse = new XcChooseCourse();
         xcChooseCourse.setCourseId(coursepublish.getId());
         xcChooseCourse.setCourseName(coursepublish.getName());
@@ -99,19 +112,53 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
         xcChooseCourse.setValidtimeEnd(LocalDateTime.now().plusDays(365));
         chooseCourseMapper.insert(xcChooseCourse);
 
-        //向我的课程表添加一条记录
+        //2. 向我的课程表添加一条记录
         addCourseTables(xcChooseCourse);
 
         return xcChooseCourse;
     }
 
     /**
-     * 添加到课程表
+     * 添加收费课程 收费课程只添加到选课表
+     * @param userId
+     * @param coursepublish
+     * @return
+     */
+    @Transactional(rollbackFor = Exception.class)
+    public XcChooseCourse addChargeCourse(String userId,CoursePublish coursepublish){
+        LambdaQueryWrapper<XcChooseCourse> queryWrapper = new LambdaQueryWrapper<XcChooseCourse>().eq(XcChooseCourse::getUserId, userId)
+                .eq(XcChooseCourse::getCourseId, coursepublish.getId())
+                .eq(XcChooseCourse::getOrderType, "700002") //收费课程
+                .eq(XcChooseCourse::getStatus, "701002");  //待支付
+
+        List<XcChooseCourse> xcChooseCourses = chooseCourseMapper.selectList(queryWrapper);
+        if(xcChooseCourses != null && xcChooseCourses.size() > 0){
+            return xcChooseCourses.get(0);
+        }
+        XcChooseCourse xcChooseCourse = new XcChooseCourse();
+        xcChooseCourse.setCourseId(coursepublish.getId());
+        xcChooseCourse.setCourseName(coursepublish.getName());
+        xcChooseCourse.setCoursePrice(coursepublish.getPrice().floatValue());
+        xcChooseCourse.setUserId(userId);
+        xcChooseCourse.setCompanyId(coursepublish.getCompanyId());
+        xcChooseCourse.setOrderType("700002");//收费课程
+        xcChooseCourse.setCreateDate(LocalDateTime.now());
+        xcChooseCourse.setStatus("701002");//待支付
+
+        xcChooseCourse.setValidDays(coursepublish.getValidDays());
+        xcChooseCourse.setValidtimeStart(LocalDateTime.now());
+        xcChooseCourse.setValidtimeEnd(LocalDateTime.now().plusDays(coursepublish.getValidDays()));
+        chooseCourseMapper.insert(xcChooseCourse);
+        return xcChooseCourse;
+    }
+
+    /**
+     * 添加到我的课程表
      * @param xcChooseCourse 选课记录
      * @return
      * @throws BusinessException
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public XcCourseTables addCourseTables(XcChooseCourse xcChooseCourse) throws BusinessException {
         //选课记录完成且未过期可以添加课程到课程表
         String status = xcChooseCourse.getStatus();
@@ -140,7 +187,12 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
     }
 
 
-    //查询某人课程表中的某个课程的信息
+    /**
+     * 查询某人课程表中的某个课程的信息
+     * @param userId
+     * @param courseId
+     * @return
+     */
     private XcCourseTables getXcCourseTables(String userId, Long courseId) {
         LambdaQueryWrapper<XcCourseTables> wrapper = new LambdaQueryWrapper<XcCourseTables>().eq(XcCourseTables::getUserId, userId)
                 .eq(XcCourseTables::getCourseId, courseId);
@@ -149,40 +201,11 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
     }
 
 
-    //添加收费课程
-    @Transactional
-    public XcChooseCourse addChargeCourse(String userId,CoursePublish coursepublish){
-        LambdaQueryWrapper<XcChooseCourse> queryWrapper = new LambdaQueryWrapper<XcChooseCourse>().eq(XcChooseCourse::getUserId, userId)
-                .eq(XcChooseCourse::getCourseId, coursepublish.getId())
-                .eq(XcChooseCourse::getOrderType, "201001") //收费课程
-                .eq(XcChooseCourse::getStatus, "701002");  //待支付
-
-        List<XcChooseCourse> xcChooseCourses = chooseCourseMapper.selectList(queryWrapper);
-        if(xcChooseCourses != null && xcChooseCourses.size() > 0){
-            return xcChooseCourses.get(0);
-        }
-        XcChooseCourse xcChooseCourse = new XcChooseCourse();
-        xcChooseCourse.setCourseId(coursepublish.getId());
-        xcChooseCourse.setCourseName(coursepublish.getName());
-        xcChooseCourse.setCoursePrice(coursepublish.getPrice().floatValue());
-        xcChooseCourse.setUserId(userId);
-        xcChooseCourse.setCompanyId(coursepublish.getCompanyId());
-        xcChooseCourse.setOrderType("700002");//收费课程
-        xcChooseCourse.setCreateDate(LocalDateTime.now());
-        xcChooseCourse.setStatus("701002");//待支付
-
-        xcChooseCourse.setValidDays(coursepublish.getValidDays());
-        xcChooseCourse.setValidtimeStart(LocalDateTime.now());
-        xcChooseCourse.setValidtimeEnd(LocalDateTime.now().plusDays(coursepublish.getValidDays()));
-        chooseCourseMapper.insert(xcChooseCourse);
-        return xcChooseCourse;
-    }
-
     /**
      * 判断用户是否有某门课程的学习资格
      * @param userId
      * @param courseId
-     * @return
+     * @return XcCourseTablesDto 学习资格状态 [{"code":"702001","desc":"正常学习"},{"code":"702002","desc":"没有选课或选课后没有支付"},{"code":"702003","desc":"已过期需要申请续期或重新支付"}]
      */
     @Override
     public XcCourseTablesDto getLearningStatus(String userId, Long courseId) {
@@ -194,9 +217,9 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService {
             return xcCourseTablesDto;
         }
         BeanUtils.copyProperties(xcCourseTables,xcCourseTablesDto);
-        LocalDateTime validtimeEnd = xcCourseTables.getValidtimeEnd();
-        if(LocalDateTime.now().isAfter(validtimeEnd)){
-            //课程已过期
+        LocalDateTime validTimeEnd = xcCourseTables.getValidtimeEnd();
+        if(LocalDateTime.now().isAfter(validTimeEnd)){
+            //课程表里存在但是已过期
             xcCourseTablesDto.setLearnStatus("702003");
             return xcCourseTablesDto;
         }
