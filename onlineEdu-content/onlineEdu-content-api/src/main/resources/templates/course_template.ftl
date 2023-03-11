@@ -58,9 +58,9 @@
         </div>
         <div class="banner-rit">
             <p>
-                <a href="http://www.xuecheng-plus.com/course/preview/learning.html?id=${model.courseBase.id}" target="_blank">
+                <a href="http://www.51xuecheng.cn/course/preview/learning.html?id=${model.courseBase.id}" target="_blank">
                     <#if model.courseBase.pic??>
-                        <img src="http://file.xuecheng-plus.com${model.courseBase.pic}" alt="" width="270" height="156">
+                        <img src="http://file.51xuecheng.cn${model.courseBase.pic}" alt="" width="270" height="156">
                     <#else>
                         <img src="/static/img/widget-video.png" alt="" width="270" height="156">
                     </#if>
@@ -179,11 +179,12 @@
                                 <div class="title act"><i class="i-chevron-top"></i>${firstNode.pname}<span class="time">x小时</span></div>
                                 <div class="drop-down" style="height: 260px;">
                                     <ul class="list-box">
-                                        <#if firstNode??>
-                                            <#list firstNode.children as secondNode>
+                                        <#if myOptionalVar??>
+                                            <#list firstNode.teachPlanTreeNodes as secondNode>
                                                 <li><a href="http://www.51xuecheng.cn/course/preview/learning.html?id=${model.courseBase.id}&chapter=${secondNode.teachplanMedia.teachplanId!''}" target="_blank">${secondNode.pname}</a></li>
                                             </#list>
                                         <#else>
+<#--                                            when-missing-->
                                         </#if>
                                     </ul>
                                 </div>
@@ -627,7 +628,7 @@
                 </div>
             </div>
             <div class="fact-pic">实际支付: <span>￥${model.courseBase.price!''}元</span></div>
-            <div class="go-pay"><a href="#" @click.prevent="wxPay()">微信支付</a><a href="#" @click.prevent="aliPay()">支付宝支付</a><a href="#" @click.prevent="startLearngin()">试学</a></div>
+            <div class="go-pay"><a href="#" @click.prevent="wxPay()">微信支付</a><a href="#" @click.prevent="aliPay()">支付宝支付</a><a href="#" @click.prevent="querypayresult()">支付完成</a><a href="#" @click.prevent="startLearngin()">试学</a></div>
         </div>
         <!--支付弹窗- end -->
         <div class="popup-comment-box">

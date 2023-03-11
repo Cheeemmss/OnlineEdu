@@ -25,6 +25,7 @@ import static com.xuecheng.orders.config.AlipayConfig.CHARSET;
  * @Author cheems
  * @Date 2023/3/9 17:35
  */
+
 @Controller
 public class PayTestController {
 
@@ -59,7 +60,7 @@ public class PayTestController {
         httpResponse.getWriter().flush();
     }
 
-    @RequestMapping("/notify")
+    @RequestMapping("/notifyTest")
     public void paynotify(HttpServletRequest request) throws UnsupportedEncodingException, AlipayApiException {
         Map<String,String> params = new HashMap<String,String>();
         Map requestParams = request.getParameterMap();

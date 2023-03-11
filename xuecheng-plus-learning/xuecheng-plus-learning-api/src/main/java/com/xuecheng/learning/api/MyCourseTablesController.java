@@ -47,5 +47,18 @@ public class MyCourseTablesController {
         return xcChooseCourseDto;
     }
 
+    @ApiOperation("查询学习资格")
+    @PostMapping("/choosecourse/learnstatus/{courseId}")
+    public XcCourseTablesDto getLearnstatus(@PathVariable("courseId") Long courseId) throws BusinessException {
+        //登录用户
+        SecurityUtil.XcUser user = SecurityUtil.getUser();
+        if(user == null){
+            throw new BusinessException(CODE_UNKOWN_ERROR,"请登录后继续选课");
+        }
+        String userId = user.getId();
+        return  courseTablesService.getLearningStatus(userId, courseId);
+
+    }
+
 
 }

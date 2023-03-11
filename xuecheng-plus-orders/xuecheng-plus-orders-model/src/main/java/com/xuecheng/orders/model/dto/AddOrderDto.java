@@ -39,7 +39,7 @@ public class AddOrderDto  {
     private String orderDetail;
 
     /**
-     * 外部系统业务id
+     * 外部系统业务id (如买课程 这里记录的就是选课记录表的主键Id)
      */
     private String outBusinessId;
 
