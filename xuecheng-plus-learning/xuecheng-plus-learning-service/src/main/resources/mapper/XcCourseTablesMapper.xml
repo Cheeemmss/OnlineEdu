@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xuecheng.learning.mapper.XcCourseTablesMapper">
+<mapper namespace="com.onlineedu.learning.mapper.XcCourseTablesMapper">
 
     <!-- 通用查询映射结果 -->
-    <resultMap id="BaseResultMap" type="com.xuecheng.learning.model.po.XcCourseTables">
+    <resultMap id="BaseResultMap" type="com.onlineedu.learning.model.po.XcCourseTables">
         <id column="id" property="id"/>
         <result column="choose_course_id" property="chooseCourseId"/>
         <result column="user_id" property="userId"/>
@@ -27,8 +27,8 @@
 
 
     <select id="myCourseTables"
-            resultType="com.xuecheng.learning.model.dto.MyCourseTableItemDto"
-            parameterType="com.xuecheng.learning.model.dto.MyCourseTableParams">
+            resultType="com.onlineedu.learning.model.dto.MyCourseTableItemDto"
+            parameterType="com.onlineedu.learning.model.dto.MyCourseTableParams">
 
         SELECT
         t1.*,
@@ -67,7 +67,7 @@
     </select>
     <select id="myCourseTablesCount"
             resultType="int"
-            parameterType="com.xuecheng.learning.model.dto.MyCourseTableParams">
+            parameterType="com.onlineedu.learning.model.dto.MyCourseTableParams">
 
         SELECT
         count(1)

@@ -17,6 +17,9 @@ spring:
           - data-id: orders-service-${spring.profiles.active}.yaml
             group: online_edu
             refresh: true
+          - data-id: rabbitmq-${spring.profiles.active}.yaml
+            group: online_edu
+            refresh: true
 
   profiles:
     active: dev
